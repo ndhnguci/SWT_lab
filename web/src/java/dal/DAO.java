@@ -26,6 +26,7 @@ public class DAO extends DBContext {
     public static DAO INSTANCE = new DAO();
     private Connection con;
     private String status = "OK";
+    private static final String ERROR_GET_PRODUCT_BY_CATEGORIES = "Error at getProductByCategories ";
 
     public DAO() {
         try {
@@ -303,7 +304,7 @@ public class DAO extends DBContext {
                 );
             }
         } catch (SQLException e) {
-            status = "Error at getProductByCategories " + e.getMessage();
+            status = ERROR_GET_PRODUCT_BY_CATEGORIES + e.getMessage();
         }
         return p;
     }
@@ -324,7 +325,7 @@ public class DAO extends DBContext {
                 ));
             }
         } catch (SQLException e) {
-            status = "Error at getProductByCategories " + e.getMessage();
+            status = ERROR_GET_PRODUCT_BY_CATEGORIES + e.getMessage();
         }
         return c;
     }
@@ -346,7 +347,7 @@ public class DAO extends DBContext {
                 ));
             }
         } catch (SQLException e) {
-            status = "Error at getProductByCategories " + e.getMessage();
+            status = ERROR_GET_PRODUCT_BY_CATEGORIES + e.getMessage();
         }
         return c;
     }
