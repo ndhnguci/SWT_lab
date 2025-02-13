@@ -56,10 +56,10 @@ public class DeleteCustomerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id_raw = request.getParameter("cusID");
+        String idRaw = request.getParameter("cusID");
         int id;
         try {
-            id = Integer.parseInt(id_raw);
+            id = Integer.parseInt(idRaw);
             DAO.INSTANCE.deleteCustomers(id);
         } catch (NumberFormatException e) {
             System.out.println(e);
