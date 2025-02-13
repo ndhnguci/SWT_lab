@@ -98,14 +98,14 @@
                 <form action="managerAcc" method="post">
                     <input type="hidden" name="id" value="${updateCus.id}">
                     <div class="form-group">
-                        <label>Fullname</label>
-                        <input type="text" class="form-control" id="inputAddress" 
+                        <label for="inputFullname">Fullname</label>
+                        <input type="text" class="form-control" id="inputFullname" 
                                placeholder="Fullname" name="name" value="${updateCus.fullName}">
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label>Email</label>
-                            <input type="email" class="form-control" id="inputEmail4" 
+                            <label for="inputEmail">Email</label>
+                            <input type="email" class="form-control" id="inputEmail" 
                                    placeholder="Email" name="email" value="${updateCus.email}">
                         </div>
                         <div class="form-group col-md-6">
@@ -115,18 +115,18 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Address</label>
+                        <label for="inputAddress">Address</label>
                         <input type="text" class="form-control" id="inputAddress" 
                                placeholder="Address" name="address" value="${updateCus.address}">
                     </div>
                     <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" class="form-control" id="inputAddress" 
+                        <label for="inputUsername">Username</label>
+                        <input type="text" class="form-control" id="inputUsername" 
                                placeholder="Username" name="user" value="${updateCus.user}">
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
-                        <input type="text" class="form-control" id="inputAddress" 
+                        <label for="inputPassword">Password</label>
+                        <input type="text" class="form-control" id="inputPassword" 
                                placeholder="Password" name="pass" value="${updateCus.pass}">
                     </div>
                     <button type="submit" class="btn btn-primary">Update</button>
