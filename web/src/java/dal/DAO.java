@@ -371,50 +371,54 @@ public class DAO extends DBContext {
     }
 
     public void addOrder(Customers c, Cart cart) {
-    LocalDate curDate = java.time.LocalDate.now();
-    String date = curDate.toString();
-    try {       
-        String sql = "INSERT INTO [dbo].[Orders] "
-                + "([CustomerID], [date], [totalmoney]) "
-                + "VALUES(?,?,?)";
-        PreparedStatement ps = con.prepareStatement(sql);
-        ps.setInt(1, c.getId());
-        ps.setString(2, date);
-        ps.setDouble(3, cart.getTotalMoney());
-        ps.executeUpdate();
-        
-        String sql1 = "SELECT TOP 1 OrderID FROM Orders ORDER BY OrderID DESC";
-        PreparedStatement ps1 = con.prepareStatement(sql1);
-        ResultSet rs = ps1.executeQuery();
-        if (rs.next()) {
-            int oid = rs.getInt(1);
-          
-            String sql2 = "INSERT INTO [dbo].[OrderDetails] "
-                    + "([OrderID], [ProductID], [quantity], [price]) "
-                    + "VALUES(?,?,?,?)";
-            PreparedStatement ps2 = con.prepareStatement(sql2);
-            
-            ps2.setInt(1, oid);
-            
-            for (Item i : cart.getItems()) {               
-                ps2.setInt(2, i.getProduct().getId());
-                ps2.setInt(3, i.getQuantity());
-                ps2.setDouble(4, i.getPrice());
-               
-                ps2.executeUpdate();
-                
+        LocalDate curDate = java.time.LocalDate.now();
+        String date = curDate.toString();
+        try {
+            String sql = "INSERT INTO [dbo].[Orders] "
+                    + "([CustomerID], [date], [totalmoney]) "
+                    + "VALUES(?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, c.getId());
+            ps.setString(2, date);
+            ps.setDouble(3, cart.getTotalMoney());
+            ps.executeUpdate();
+
+            String sql1 = "SELECT TOP 1 OrderID FROM Orders ORDER BY OrderID DESC";
+            PreparedStatement ps1 = con.prepareStatement(sql1);
+            ResultSet rs = ps1.executeQuery();
+            if (rs.next()) {
+                int oid = rs.getInt(1);
+
+                String sql2 = "INSERT INTO [dbo].[OrderDetails] "
+                        + "([OrderID], [ProductID], [quantity], [price]) "
+                        + "VALUES(?,?,?,?)";
+                PreparedStatement ps2 = con.prepareStatement(sql2);
+
+                ps2.setInt(1, oid);
+
+                for (Item i : cart.getItems()) {
+                    ps2.setInt(2, i.getProduct().getId());
+                    ps2.setInt(3, i.getQuantity());
+                    ps2.setDouble(4, i.getPrice());
+                    ps2.addBatch(); 
+                }
+                ps2.executeBatch(); 
+
                 String sql3 = "UPDATE Products SET quantity = quantity - ? WHERE ProductID = ?";
-                PreparedStatement ps3 = con.prepareStatement(sql3);
-                ps3.setInt(1, i.getQuantity());
-                ps3.setInt(2, i.getProduct().getId());
-                ps3.executeUpdate();
+                try (PreparedStatement ps3 = con.prepareStatement(sql3)) {
+                    for (Item i : cart.getItems()) {
+                        ps3.setInt(1, i.getQuantity());
+                        ps3.setInt(2, i.getProduct().getId());
+                        ps3.addBatch();  
+                    }
+                    ps3.executeBatch(); 
+                }
             }
+        } catch (SQLException e) {
+            status = "Error at addOrder: " + e.getMessage();
+
         }
-    } catch (SQLException e) {
-        status = "Error at addOrder: " + e.getMessage();
-        
     }
-}
 
     // update - insert - detele
     public void updateProduct(int id, long price, int quantity, int cateID, int statusProduct) {
