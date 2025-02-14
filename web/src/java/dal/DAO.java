@@ -23,7 +23,7 @@ import model.Products;
  */
 public class DAO extends DBContext {
 
-    public static DAO INSTANCE = new DAO();
+    public static final DAO INSTANCE = new DAO();
     private Connection con;
     private String status = "OK";
     private static final String ERROR_GET_PRODUCT_BY_CATEGORIES = "Error at getProductByCategories ";
@@ -38,10 +38,6 @@ public class DAO extends DBContext {
 
     public static DAO getINSTANCE() {
         return INSTANCE;
-    }
-
-    public static void setINSTANCE(DAO INSTANCE) {
-        DAO.INSTANCE = INSTANCE;
     }
 
     public Connection getCon() {
@@ -78,7 +74,7 @@ public class DAO extends DBContext {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Customers c = new Customers(
+                return new Customers(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -88,7 +84,6 @@ public class DAO extends DBContext {
                         rs.getString(7),
                         rs.getBoolean(8)
                 );
-                return c;
             }
         } catch (SQLException e) {
             status = "Error at checkAcc " + e.getMessage();
@@ -219,7 +214,7 @@ public class DAO extends DBContext {
     // List of -----
     public List<Products> manageProductsByAddmin() {
         List<Products> p = new ArrayList<>();
-        String sql = "SELECT * FROM Products";
+        String sql = "SELECT ProductID, ProductName, CategoryID, Description, Price, Image, Quantity, isContinue FROM Products";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -379,11 +374,9 @@ public class DAO extends DBContext {
         LocalDate curDate = java.time.LocalDate.now();
         String date = curDate.toString();
         try {
-            String sql = "INSERT INTO [dbo].[Orders]\n"
-                    + "           ([CustomerID]\n"
-                    + "           ,[date]\n"
-                    + "           ,[totalmoney])\n"
-                    + "     VALUES(?,?,?)";
+            String sql = "INSERT INTO [dbo].[Orders] "
+                    + "([CustomerID], [date], [totalmoney]) "
+                    + "VALUES(?,?,?)";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, c.getId());
             ps.setString(2, date);
@@ -395,29 +388,35 @@ public class DAO extends DBContext {
             ResultSet rs = ps1.executeQuery();
             if (rs.next()) {
                 int oid = rs.getInt(1);
+
+                String sql2 = "INSERT INTO [dbo].[OrderDetails] "
+                        + "([OrderID], [ProductID], [quantity], [price]) "
+                        + "VALUES(?,?,?,?)";
+                PreparedStatement ps2 = con.prepareStatement(sql2);
+
+                ps2.setInt(1, oid);
+
                 for (Item i : cart.getItems()) {
-                    String sql2 = "INSERT INTO [dbo].[OrderDetails]\n"
-                            + "           ([OrderID]\n"
-                            + "           ,[ProductID]\n"
-                            + "           ,[quantity]\n"
-                            + "           ,[price])\n"
-                            + "     VALUES(?,?,?,?)";
-                    PreparedStatement ps2 = con.prepareStatement(sql2);
-                    ps2.setInt(1, oid);
                     ps2.setInt(2, i.getProduct().getId());
                     ps2.setInt(3, i.getQuantity());
                     ps2.setDouble(4, i.getPrice());
-                    ps2.executeUpdate();
+                    ps2.addBatch(); 
+                }
+                ps2.executeBatch(); 
 
-                    String sql3 = "UPDATE Products SET quantity = quantity - ? WHERE ProductID = ?";
-                    PreparedStatement ps3 = con.prepareStatement(sql3);
-                    ps3.setInt(1, i.getQuantity());
-                    ps3.setInt(2, i.getProduct().getId());
-                    ps3.executeUpdate();
+                String sql3 = "UPDATE Products SET quantity = quantity - ? WHERE ProductID = ?";
+                try (PreparedStatement ps3 = con.prepareStatement(sql3)) {
+                    for (Item i : cart.getItems()) {
+                        ps3.setInt(1, i.getQuantity());
+                        ps3.setInt(2, i.getProduct().getId());
+                        ps3.addBatch();  
+                    }
+                    ps3.executeBatch(); 
                 }
             }
         } catch (SQLException e) {
-            status = "Error at addOrder " + e.getMessage();
+            status = "Error at addOrder: " + e.getMessage();
+
         }
     }
 

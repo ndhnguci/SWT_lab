@@ -71,7 +71,9 @@ public class ProcessServlet extends HttpServlet {
         }
         String id_raw = request.getParameter("productID");
         String num_raw = request.getParameter("num");
-        int id, num;
+        int id; 
+        int num;
+        
         id = Integer.parseInt(id_raw);
         try {
             num = Integer.parseInt(num_raw);

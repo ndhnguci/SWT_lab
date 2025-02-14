@@ -11,12 +11,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Admin
  */
 public class DeleteCustomerServlet extends HttpServlet {
+private static final Logger LOGGER = Logger.getLogger(DeleteCustomerServlet.class.getName());
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,7 +64,7 @@ public class DeleteCustomerServlet extends HttpServlet {
             id = Integer.parseInt(idRaw);
             DAO.INSTANCE.deleteCustomers(id);
         } catch (NumberFormatException e) {
-            System.out.println(e);
+            LOGGER.log(Level.SEVERE, "Error parsing customer ID", e);
         }
         response.sendRedirect("managerAcc");
     }
