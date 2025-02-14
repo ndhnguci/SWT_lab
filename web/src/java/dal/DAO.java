@@ -74,7 +74,7 @@ public class DAO extends DBContext {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Customers c = new Customers(
+                return new Customers(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
@@ -84,7 +84,6 @@ public class DAO extends DBContext {
                         rs.getString(7),
                         rs.getBoolean(8)
                 );
-                return c;
             }
         } catch (SQLException e) {
             status = "Error at checkAcc " + e.getMessage();
