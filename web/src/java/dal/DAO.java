@@ -214,7 +214,7 @@ public class DAO extends DBContext {
     // List of -----
     public List<Products> manageProductsByAddmin() {
         List<Products> p = new ArrayList<>();
-        String sql = "SELECT * FROM Products";
+        String sql = "SELECT ProductID, ProductName, CategoryID, Description, Price, Image, Quantity, isContinue FROM Products";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
