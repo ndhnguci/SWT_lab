@@ -23,7 +23,7 @@ import model.Products;
  */
 public class DAO extends DBContext {
 
-    public static DAO INSTANCE = new DAO();
+    public static final DAO INSTANCE = new DAO();
     private Connection con;
     private String status = "OK";
     private static final String ERROR_GET_PRODUCT_BY_CATEGORIES = "Error at getProductByCategories ";
@@ -38,10 +38,6 @@ public class DAO extends DBContext {
 
     public static DAO getINSTANCE() {
         return INSTANCE;
-    }
-
-    public static void setINSTANCE(DAO INSTANCE) {
-        DAO.INSTANCE = INSTANCE;
     }
 
     public Connection getCon() {
