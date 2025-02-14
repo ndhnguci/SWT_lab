@@ -55,7 +55,8 @@ public class CartServlet extends HttpServlet {
         }
         String tnum = request.getParameter("num");
         String tid = request.getParameter("id");
-        int num, id;
+        int num;
+        int id;
         num = Integer.parseInt(tnum);
         id = Integer.parseInt(tid);
         String buy = request.getParameter("buy");
