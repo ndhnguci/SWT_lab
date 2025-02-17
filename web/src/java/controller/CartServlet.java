@@ -21,6 +21,7 @@ import model.Products;
  * @author Admin
  */
 public class CartServlet extends HttpServlet {
+    private static final String TOTAL_ATTRIBUTE = "total";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -38,7 +39,8 @@ public class CartServlet extends HttpServlet {
         for (Item item : list) {
             total += (item.getPrice() * item.getQuantity());
         }
-        request.setAttribute("total", total);
+        request.setAttribute(TOTAL_ATTRIBUTE, total);
+
         request.getRequestDispatcher("Views/cart.jsp").forward(request, response);
     }
 
@@ -55,14 +57,12 @@ public class CartServlet extends HttpServlet {
         }
         String tnum = request.getParameter("num");
         String tid = request.getParameter("id");
-        int num;
-        int id;
-        num = Integer.parseInt(tnum);
-        id = Integer.parseInt(tid);
+        int num = Integer.parseInt(tnum);
+        int id = Integer.parseInt(tid);
         String buy = request.getParameter("buy");
         String addtocart = request.getParameter("addtocart");
 
-        if (buy != null) {
+        if (buy != null || addtocart != null) {
             Products p = DAO.INSTANCE.getProductById(id);
             long price = p.getPrice();
             Item t = new Item(p, num, price);
@@ -72,26 +72,16 @@ public class CartServlet extends HttpServlet {
             for (Item item : list) {
                 total += (item.getPrice() * item.getQuantity());
             }
-            request.setAttribute("total", total);
+            request.setAttribute(TOTAL_ATTRIBUTE, total);
             session.setAttribute("cart", cart);
             session.setAttribute("size", list.size());
-            request.getRequestDispatcher("Views/cart.jsp").forward(request, response);
-        }
 
-        if (addtocart != null) {
-            Products p = DAO.INSTANCE.getProductById(id);
-            long price = p.getPrice();
-            Item t = new Item(p, num, price);
-            cart.addItem(t);
-            List<Item> list = cart.getItems();
-            double total = 0;
-            for (Item item : list) {
-                total += (item.getPrice() * item.getQuantity());
+            if (buy != null) {
+                request.getRequestDispatcher("Views/cart.jsp").forward(request, response);
+            } else {
+                response.sendRedirect("fruit?cp=1");
             }
-            request.setAttribute("total", total);
-            session.setAttribute("cart", cart);
-            session.setAttribute("size", list.size());
-            response.sendRedirect("fruit?cp=1");
         }
     }
 }
+
