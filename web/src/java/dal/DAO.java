@@ -175,18 +175,17 @@ public class DAO extends DBContext {
                 + "      ,[Address]\n"
                 + "      ,[Role]\n"
                 + "  FROM [dbo].[Customers] WHERE Email = ?";
-        try {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            status = "Error at existedEmail " + e.getMessage();
-        }
-        return false;
+        try (PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        
+        ps.setString(1, email);
+        
+        return rs.next(); // If there's a result, the email exists
+    } catch (SQLException e) {
+        status = "Error at existedEmail: " + e.getMessage();
     }
+    return false;
+}
 
     public boolean existedPhoneNum(String phoneNum) {
         String sql = "SELECT [CustomerID]\n"
