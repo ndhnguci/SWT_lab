@@ -30,7 +30,7 @@ public class FruitServlet extends HttpServlet {
         session.setAttribute("listC", DAO.INSTANCE.getAllCategories());
         Customers customer = (Customers) session.getAttribute("account");
         List<Products> p = null;
-        if (customer != null && customer.isRole() == true) {
+        if (customer != null && customer.isRole()) {
             p = DAO.INSTANCE.manageProductsByAddmin();
         } else  {
             p = DAO.INSTANCE.getAllProducts();

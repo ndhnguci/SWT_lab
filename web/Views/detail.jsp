@@ -49,7 +49,7 @@
         <div class="container" style="margin: 100px auto;">
             <div class="row m-0">
                 <div class="col-lg-6 left-side-product-box pb-3" >
-                    <img src="${detail.image}" class="border p-3" style="width: 100%">
+                    <img src="${detail.image}" alt="Product image" class="border p-3" style="width: 100%">
                 </div>
                 <div class="col-lg-6">
                     <div class="right-side-pro-detail border p-3 m-0">
