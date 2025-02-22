@@ -175,16 +175,17 @@ public class DAO extends DBContext {
                 + "      ,[Address]\n"
                 + "      ,[Role]\n"
                 + "  FROM [dbo].[Customers] WHERE Email = ?";
-        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-
-            ps.setString(1, email);
-
-            return rs.next(); // If there's a result, the email exists
-        } catch (SQLException e) {
-            status = "Error at existedEmail: " + e.getMessage();
-        }
-        return false;
+        try (PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        
+        ps.setString(1, email);
+        
+        return rs.next(); // If there's a result, the email exists
+    } catch (SQLException e) {
+        status = "Error at existedEmail: " + e.getMessage();
     }
+    return false;
+}
 
     public boolean existedPhoneNum(String phoneNum) {
         String sql = "SELECT [CustomerID]\n"
@@ -371,7 +372,6 @@ public class DAO extends DBContext {
     public void addOrder(Customers c, Cart cart) {
         LocalDate curDate = java.time.LocalDate.now();
         String date = curDate.toString();
-
         try {
             String sql = "INSERT INTO [dbo].[Orders] "
                     + "([CustomerID], [date], [totalmoney]) "
@@ -399,18 +399,18 @@ public class DAO extends DBContext {
                     ps2.setInt(2, i.getProduct().getId());
                     ps2.setInt(3, i.getQuantity());
                     ps2.setDouble(4, i.getPrice());
-                    ps2.addBatch();
+                    ps2.addBatch(); 
                 }
-                ps2.executeBatch();
+                ps2.executeBatch(); 
 
                 String sql3 = "UPDATE Products SET quantity = quantity - ? WHERE ProductID = ?";
                 try (PreparedStatement ps3 = con.prepareStatement(sql3)) {
                     for (Item i : cart.getItems()) {
                         ps3.setInt(1, i.getQuantity());
                         ps3.setInt(2, i.getProduct().getId());
-                        ps3.addBatch();
+                        ps3.addBatch();  
                     }
-                    ps3.executeBatch();
+                    ps3.executeBatch(); 
                 }
             }
         } catch (SQLException e) {
