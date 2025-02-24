@@ -69,8 +69,8 @@
                                         <input type="text" placeholder="product name" name="proname" required/>
                                     </div>
                                     <div>
-                                        <label>Category</label>
-                                        <select name="cateID">
+                                        <label for="cateID">Category</label>
+                                        <select name="cateID" id="cateID">
                                             <c:forEach items="${listCate}" var="o">
                                                 <option value="${o.id}">${o.name}</option>
                                             </c:forEach>
